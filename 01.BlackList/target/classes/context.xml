@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:property-placeholder location="application.properties"/>
+
+    <bean id = "signUpService" class="SignUpService">
+        <constructor-arg name = "emailValidator" ref = "emailValidator"/>
+        <constructor-arg name = "passwordBlackList" ref = "passwordBlackListDB"/>
+    </bean>
+
+    <bean id = "emailValidator" class="EmailValidatorRegexImpl">
+        <property name="regex" value=".+@.+"/>
+    </bean>
+
+    <bean id = "passwordBlackListDB" class="PasswordBlackListJdbcTemplateImpl">
+        <constructor-arg name = "dataSource" ref = "dataSource"/>
+    </bean>
+
+    <bean id = "dataSource" class="com.zaxxer.hikari.HikariDataSource">
+        <constructor-arg name="configuration" ref="config"/>
+    </bean>
+
+    <bean id = "config" class="com.zaxxer.hikari.HikariConfig">
+        <property name="jdbcUrl" value="${db.url}"/>
+        <property name="username" value="${db.user}"/>
+        <property name="password" value="${db.password}"/>
+        <property name="driverClassName" value="${db.driver}"/>
+        <property name="maximumPoolSize" value="${db.hikary.pool-size}"/>
+    </bean>
+</beans>
